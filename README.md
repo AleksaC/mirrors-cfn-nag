@@ -8,5 +8,5 @@ Add this to your `.pre-commit-config.yaml`:
 - repo: https://github.com/AleksaC/mirrors-cfn-nag
   rev: 'v0.6.12'  # Use the sha / tag you want to point at
   hooks:
-   - id: cnf-nag
+   - id: cfn-nag
 ```
