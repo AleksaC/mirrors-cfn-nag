@@ -1,0 +1,45 @@
+version: 2.1
+
+jobs:
+  add-new-versions:
+    docker:
+      - image: circleci/python:3.8.2
+
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "77:a9:e6:40:5c:2b:39:82:56:0e:ec:3b:63:f7:0f:63"
+      - checkout
+      - restore_cache:
+          keys:
+            - deps-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      - run:
+          name: install requirements
+          command: |
+            virtualenv venv -p python3
+            source venv/bin/activate
+            pip install -r requirements.txt
+      - run:
+          name: add_new_versions
+          command: |
+            git config --global user.name "CircleCI"
+            git remote set-url origin $CIRCLE_REPOSITORY_URL &> /dev/null
+            source venv/bin/activate
+            ./add-new-versions.py
+      - save_cache:
+          key: deps-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          paths:
+            - venv
+
+workflows:
+  version: 2
+  main:
+    triggers:
+      - schedule:
+          cron: "0 12 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - add-new-versions
