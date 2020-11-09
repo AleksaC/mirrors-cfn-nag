@@ -1,0 +1,7 @@
+- id: cfn-nag
+  name: cfn-nag
+  entry: cfn_nag_scan
+  language: ruby
+  files: \.(json|yaml|yml|template)$
+  args: [--input-path]
+  require_serial: false
