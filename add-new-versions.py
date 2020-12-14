@@ -1,34 +1,41 @@
 #!/usr/bin/env python
 
+import json
 import os
 import re
-from typing import List, Union
+from urllib.request import Request
+from urllib.request import urlopen
 
-import requests
+from typing import List
+from typing import Union
+
+
+def get(url: str, headers: dict) -> dict:
+    req = Request(url, headers=headers)
+    resp = urlopen(req, timeout=30)
+    return json.loads(resp.read())
 
 
 def get_releases() -> List[str]:
     base_url = "https://api.github.com/repos/{}/{}/{}"
     headers = {"Accept": "application/vnd.github.v3+json"}
 
-    circleci_cli_releases = requests.get(
+    cfn_nag_releases = get(
         base_url.format("stelligent", "cfn_nag", "releases"), headers=headers
     )
 
-    hook_tags = requests.get(
+    hook_tags = get(
         base_url.format("AleksaC", "mirrors-cfn-nag", "tags"),
         headers=headers,
     )
 
     new_releases = []
-
-    if circleci_cli_releases.ok and hook_tags.ok:
-        latest = hook_tags.json()[0]["name"]
-        for release in circleci_cli_releases.json():
-            version = release["tag_name"]
-            if version == latest:
-                break
-            new_releases.append(version)
+    latest = hook_tags[0]["name"]
+    for release in cfn_nag_releases:
+        version = release["tag_name"]
+        if version == latest:
+            break
+        new_releases.append(version)
 
     return new_releases
 
@@ -53,9 +60,9 @@ def update_version(version: str) -> None:
     update_file(
         "pre_commit_fake_gem.gemspec",
         r"s\.add_dependency \'cfn-nag\', \'[0-9]+\.[0-9]+\.[0-9]+\'",
-        f"s\.add_dependency 'cfn-nag', '{version}'",
+        f"s.add_dependency 'cfn-nag', '{version}'",
     )
-    update_file("README.md", r"rev: \'v[0-9]+\.[0-9]+\.[0-9]+\'", f"rev: v'{version}'")
+    update_file("README.md", r"rev: \'v[0-9]+\.[0-9]+\.[0-9]+\'", f"rev: v{version}")
 
 
 def push_tag(version: str) -> None:

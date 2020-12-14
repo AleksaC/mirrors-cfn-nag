@@ -10,15 +10,6 @@ jobs:
           fingerprints:
             - "77:a9:e6:40:5c:2b:39:82:56:0e:ec:3b:63:f7:0f:63"
       - checkout
-      - restore_cache:
-          keys:
-            - deps-{{ .Branch }}-{{ checksum "requirements.txt" }}
-      - run:
-          name: install requirements
-          command: |
-            virtualenv venv -p python3
-            source venv/bin/activate
-            pip install -r requirements.txt
       - run:
           name: add_new_versions
           command: |
@@ -26,10 +17,6 @@ jobs:
             git remote set-url origin $CIRCLE_REPOSITORY_URL &> /dev/null
             source venv/bin/activate
             ./add-new-versions.py
-      - save_cache:
-          key: deps-{{ .Branch }}-{{ checksum "requirements.txt" }}
-          paths:
-            - venv
 
 workflows:
   version: 2
