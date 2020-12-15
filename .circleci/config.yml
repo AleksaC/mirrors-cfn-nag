@@ -15,7 +15,6 @@ jobs:
           command: |
             git config --global user.name "CircleCI"
             git remote set-url origin $CIRCLE_REPOSITORY_URL &> /dev/null
-            source venv/bin/activate
             ./add-new-versions.py
 
 workflows:
