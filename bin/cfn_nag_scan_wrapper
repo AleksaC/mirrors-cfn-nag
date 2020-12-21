@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+input_path_index = ARGV.find_index("--input-path")
+
+if input_path_index.nil?
+    input_path_index = ARGV.find_index("-i")
+end
+
+if input_path_index.nil?
+    puts "--input-path needs to be added as the final argument to args for this hook"
+    exit 1
+end
+
+args = ARGV[0..input_path_index].join(" ")
+files = ARGV[input_path_index+1..ARGV.length()]
+
+errors = []
+
+for file in files
+    res = `cfn_nag_scan #{args} #{file}`
+
+    if not $?.success?
+        errors.push(res)
+    end
+end
+
+if not errors.empty?
+    for error in errors
+        puts error
+    end
+
+    exit 1
+end

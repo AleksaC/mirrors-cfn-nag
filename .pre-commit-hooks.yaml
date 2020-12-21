@@ -1,7 +1,7 @@
 - id: cfn-nag
   name: cfn-nag
-  entry: cfn_nag_scan
+  entry: cfn_nag_scan_wrapper
   language: ruby
   files: \.(json|yaml|yml|template)$
-  args: [--input-path]
+  args: [--fail-on-warnings, --input-path]
   require_serial: false
