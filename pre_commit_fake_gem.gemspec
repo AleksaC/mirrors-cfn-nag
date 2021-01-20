@@ -5,5 +5,5 @@ Gem::Specification.new do |s|
     s.authors = ['Aleksa Cukovic']
     s.summary = 'A fake mirror gem for cfn nag'
     s.description = 'A fake mirror gem for cfn nag'
-    s.add_dependency 'cfn-nag', '0.6.23'
+    s.add_dependency 'cfn-nag', '0.7.0'
 end
