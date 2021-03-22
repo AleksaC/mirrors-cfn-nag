@@ -1,5 +1,6 @@
 - id: cfn-nag
   name: cfn-nag
+  description: Wrapper around cfn_nag_scan that allows it to be ran on multiple files within a single hook
   entry: cfn_nag_scan_wrapper
   language: ruby
   files: \.(json|yaml|yml|template)$
