@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import base64
 import json
 import os
 import re
@@ -17,8 +18,14 @@ def get(url: str, headers: dict) -> dict:
 
 
 def get_releases() -> List[str]:
+    gh_token = os.environ["GH_TOKEN"]
+    auth = base64.b64encode(f"AleksaC:{gh_token}".encode()).decode()
+
     base_url = "https://api.github.com/repos/{}/{}/{}"
-    headers = {"Accept": "application/vnd.github.v3+json"}
+    headers = {
+        "Accept": "application/vnd.github.v3+json",
+        "Authorization": f"Basic {auth}",
+    }
 
     cfn_nag_releases = get(
         base_url.format("stelligent", "cfn_nag", "releases"), headers=headers
